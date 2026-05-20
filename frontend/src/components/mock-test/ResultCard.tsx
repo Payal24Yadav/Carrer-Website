@@ -11,6 +11,15 @@ type Result = {
   unansweredCount: number;
   totalQuestions: number;
   percentage: number;
+  sectionScores?: {
+    sectionName: string;
+    score: number;
+    totalMarks: number;
+    correctCount: number;
+    wrongCount: number;
+    unansweredCount: number;
+    totalQuestions: number;
+  }[];
 };
 
 export default function ResultCard({ result, retryHref }: { result: Result; retryHref: string }) {
@@ -37,6 +46,30 @@ export default function ResultCard({ result, retryHref }: { result: Result; retr
 
       <p className="mt-8 text-sm text-gray-600 leading-relaxed">{message}</p>
       <p className="mt-2 text-xs text-gray-400">Unanswered: {result.unansweredCount} of {result.totalQuestions}</p>
+
+      {result.sectionScores && result.sectionScores.length > 0 && (
+        <div className="mt-8 text-left">
+          <h2 className="text-sm font-extrabold text-navy uppercase tracking-wider mb-3">Section Breakdown</h2>
+          <div className="space-y-3">
+            {result.sectionScores.map((section) => (
+              <div key={section.sectionName} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-navy">{section.sectionName}</h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {section.correctCount} correct, {section.wrongCount} wrong, {section.unansweredCount} unanswered
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-extrabold text-primary">{section.score}/{section.totalMarks}</div>
+                    <div className="text-[10px] font-bold text-gray-400 uppercase">{section.totalQuestions} questions</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
         <Link href={retryHref} className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90">

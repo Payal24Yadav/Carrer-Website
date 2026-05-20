@@ -32,9 +32,13 @@ const questionSchema = new mongoose.Schema({
     default: '',
     trim: true,
   },
-  section: {
+  sectionName: {
     type: String,
     default: 'General',
+    trim: true,
+  },
+  section: {
+    type: String,
     trim: true,
   },
   marks: {
@@ -47,6 +51,6 @@ const questionSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-questionSchema.index({ mockTestId: 1, section: 1, createdAt: 1 });
+questionSchema.index({ mockTestId: 1, sectionName: 1, createdAt: 1 });
 
 module.exports = mongoose.model('Question', questionSchema);

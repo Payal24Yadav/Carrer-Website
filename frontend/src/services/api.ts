@@ -144,5 +144,6 @@ export const deleteQuestionAPI = (id: string) => API.delete(`/questions/${id}`);
 
 // Mock Test Attempt APIs
 export const submitMockTestAttemptAPI = (data: any) => API.post("/attempts/submit", data);
+export const getMockTestAttemptAPI = (id: string) => API.get(`/attempts/${id}`);
 
 export default API;

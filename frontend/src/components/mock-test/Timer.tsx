@@ -3,24 +3,37 @@
 import { useEffect, useRef, useState } from "react";
 import { Clock } from "lucide-react";
 
-export default function Timer({ durationMinutes, onExpire }: { durationMinutes: number; onExpire: () => void }) {
-  const [secondsLeft, setSecondsLeft] = useState(Math.max(1, durationMinutes) * 60);
+export default function Timer({
+  durationMinutes,
+  secondsLeft: controlledSecondsLeft,
+  onSecondsChange,
+  onExpire,
+}: {
+  durationMinutes: number;
+  secondsLeft?: number;
+  onSecondsChange?: (seconds: number) => void;
+  onExpire: () => void;
+}) {
+  const [internalSecondsLeft, setInternalSecondsLeft] = useState(Math.max(1, durationMinutes) * 60);
   const expiredRef = useRef(false);
   const onExpireRef = useRef(onExpire);
+  const secondsLeft = controlledSecondsLeft ?? internalSecondsLeft;
 
   useEffect(() => {
     onExpireRef.current = onExpire;
   }, [onExpire]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSecondsLeft(Math.max(1, durationMinutes) * 60);
+    if (controlledSecondsLeft === undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setInternalSecondsLeft(Math.max(1, durationMinutes) * 60);
+    }
     expiredRef.current = false;
-  }, [durationMinutes]);
+  }, [controlledSecondsLeft, durationMinutes]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setSecondsLeft((current) => {
+      const update = (current: number) => {
         if (current <= 1) {
           window.clearInterval(interval);
           if (!expiredRef.current) {
@@ -30,11 +43,17 @@ export default function Timer({ durationMinutes, onExpire }: { durationMinutes: 
           return 0;
         }
         return current - 1;
-      });
+      };
+
+      if (controlledSecondsLeft !== undefined) {
+        onSecondsChange?.(update(controlledSecondsLeft));
+      } else {
+        setInternalSecondsLeft(update);
+      }
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [durationMinutes]);
+  }, [controlledSecondsLeft, durationMinutes, onSecondsChange]);
 
   const minutes = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
   const seconds = (secondsLeft % 60).toString().padStart(2, "0");

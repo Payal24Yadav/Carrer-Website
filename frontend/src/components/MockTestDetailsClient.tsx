@@ -31,6 +31,7 @@ interface MockTest {
   totalQuestions?: number;
   totalMarks?: number;
   instructions?: string;
+  examSections?: { name: string; duration?: number; totalQuestions?: number }[];
   sections?: { type: string; title?: string; content: unknown }[];
   status: string;
   isFeatured: boolean;
@@ -193,6 +194,7 @@ export default function MockTestDetailsClient({ slug }: { slug: string }) {
           {/* Details side */}
           <div className="flex-1 space-y-8">
             <RegistrationForm examTitle={mockTest.title} examSlug={mockTest.slug} />
+            <ExamOverview mockTest={mockTest} />
 
             {/* Dynamic Tabs Card */}
             {mockTest.sections && mockTest.sections.length > 0 ? (
@@ -328,5 +330,42 @@ export default function MockTestDetailsClient({ slug }: { slug: string }) {
 
       <Footer />
     </main>
+  );
+}
+
+function ExamOverview({ mockTest }: { mockTest: MockTest }) {
+  const sections = Array.isArray(mockTest.examSections) ? mockTest.examSections : [];
+
+  return (
+    <div className="bg-white border border-gray-100 rounded-[2rem] p-6 sm:p-8 shadow-sm">
+      <h2 className="text-xl font-bold text-navy mb-5">Exam Overview</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <OverviewMetric label="Duration" value={`${mockTest.duration || 0} min`} />
+        <OverviewMetric label="Questions" value={mockTest.totalQuestions || 0} />
+        <OverviewMetric label="Marks" value={mockTest.totalMarks || 0} />
+      </div>
+      {sections.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3">Sections</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {sections.map((section) => (
+              <div key={section.name} className="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <div className="font-bold text-navy">{section.name}</div>
+                <div className="text-xs text-gray-500 mt-1">{section.duration || mockTest.duration || 0} min | {section.totalQuestions || 0} questions</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OverviewMetric({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
+      <div className="text-2xl font-extrabold text-primary">{value}</div>
+      <div className="text-xs font-bold text-gray-500 uppercase mt-1">{label}</div>
+    </div>
   );
 }

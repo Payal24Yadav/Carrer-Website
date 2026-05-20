@@ -4,6 +4,7 @@ type Question = {
   _id: string;
   question: string;
   options: string[];
+  sectionName?: string;
   section?: string;
   marks?: number;
   negativeMarks?: number;
@@ -24,7 +25,7 @@ export default function QuestionCard({
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <span className="text-xs font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full">Question {index + 1}</span>
-        <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{question.section || "General"}</span>
+        <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{question.sectionName || question.section || "General"}</span>
         <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{question.marks || 1} mark(s)</span>
       </div>
 

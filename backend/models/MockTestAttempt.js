@@ -33,6 +33,15 @@ const mockTestAttemptSchema = new mongoose.Schema({
       type: Number,
       default: null,
     },
+    correctAnswer: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['correct', 'wrong', 'skipped'],
+      required: true,
+    },
     isCorrect: {
       type: Boolean,
       default: false,
@@ -41,8 +50,17 @@ const mockTestAttemptSchema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
+    sectionName: {
+      type: String,
+      default: 'General',
+      trim: true,
+    },
   }],
   score: {
+    type: Number,
+    default: 0,
+  },
+  totalScore: {
     type: Number,
     default: 0,
   },
@@ -62,6 +80,72 @@ const mockTestAttemptSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  skippedCount: {
+    type: Number,
+    default: 0,
+  },
+  sectionScores: [{
+    sectionName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+    correctCount: {
+      type: Number,
+      default: 0,
+    },
+    wrongCount: {
+      type: Number,
+      default: 0,
+    },
+    unansweredCount: {
+      type: Number,
+      default: 0,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0,
+    },
+  }],
+  sectionWiseScore: [{
+    sectionName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+    correctCount: {
+      type: Number,
+      default: 0,
+    },
+    wrongCount: {
+      type: Number,
+      default: 0,
+    },
+    skippedCount: {
+      type: Number,
+      default: 0,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0,
+    },
+  }],
   submittedAt: {
     type: Date,
     default: Date.now,

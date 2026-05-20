@@ -53,6 +53,23 @@ const mockTestSchema = new mongoose.Schema({
     default: '',
     trim: true,
   },
+  examSections: [{
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    duration: {
+      type: Number,
+      default: 30,
+      min: 1,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+  }],
   
   // Dynamic CMS Block Builder Field
   sections: [{

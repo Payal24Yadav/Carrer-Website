@@ -13,7 +13,7 @@ const emptyForm = {
   options: ["", "", "", ""],
   correctAnswer: 0,
   explanation: "",
-  section: "General",
+  sectionName: "General",
   marks: 1,
   negativeMarks: 0,
 };
@@ -22,6 +22,7 @@ export default function MockTestQuestionsPage() {
   const [tests, setTests] = useState<any[]>([]);
   const [questions, setQuestions] = useState<any[]>([]);
   const [selectedTest, setSelectedTest] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<any>(emptyForm);
@@ -32,8 +33,11 @@ export default function MockTestQuestionsPage() {
     const list = data.data || [];
     setTests(list);
     if (!selectedTest && list[0]?._id) {
+      const firstSection = Array.isArray(list[0].examSections) && list[0].examSections[0]?.name
+        ? list[0].examSections[0].name
+        : "General";
       setSelectedTest(list[0]._id);
-      setForm((current: any) => ({ ...current, mockTestId: list[0]._id }));
+      setForm((current: any) => ({ ...current, mockTestId: list[0]._id, sectionName: firstSection }));
     }
   };
 
@@ -41,7 +45,9 @@ export default function MockTestQuestionsPage() {
     if (!testId) return;
     setLoading(true);
     try {
-      const { data } = await getQuestionsAPI(`mockTestId=${testId}`);
+      const params = new URLSearchParams({ mockTestId: testId });
+      if (selectedSection) params.set("sectionName", selectedSection);
+      const { data } = await getQuestionsAPI(params.toString());
       setQuestions(data.data || []);
     } catch {
       toast.error("Failed to load questions");
@@ -58,16 +64,32 @@ export default function MockTestQuestionsPage() {
 
   useEffect(() => {
     if (selectedTest) {
+      const test = tests.find((item) => item._id === selectedTest);
+      const firstSection = Array.isArray(test?.examSections) && test.examSections[0]?.name ? test.examSections[0].name : "General";
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setForm((current: any) => ({ ...current, mockTestId: selectedTest }));
+      setForm((current: any) => {
+        const availableSections = Array.isArray(test?.examSections) ? test.examSections.map((section: any) => section.name) : [];
+        const currentSectionIsAvailable = availableSections.length === 0 || availableSections.includes(current.sectionName);
+
+        return {
+          ...current,
+          mockTestId: selectedTest,
+          sectionName: currentSectionIsAvailable ? (current.sectionName || firstSection) : firstSection,
+        };
+      });
       loadQuestions(selectedTest);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTest]);
+  }, [selectedTest, selectedSection]);
+
+  const selectedTestData = tests.find((test) => test._id === selectedTest);
+  const examSections = Array.isArray(selectedTestData?.examSections) && selectedTestData.examSections.length > 0
+    ? selectedTestData.examSections
+    : [{ name: "General", duration: selectedTestData?.duration || 30, totalQuestions: selectedTestData?.totalQuestions || 0 }];
 
   const resetForm = () => {
     setEditingId(null);
-    setForm({ ...emptyForm, mockTestId: selectedTest });
+    setForm({ ...emptyForm, mockTestId: selectedTest, sectionName: examSections[0]?.name || "General" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,6 +99,7 @@ export default function MockTestQuestionsPage() {
       correctAnswer: Number(form.correctAnswer),
       marks: Number(form.marks),
       negativeMarks: Number(form.negativeMarks),
+      sectionName: form.sectionName || examSections[0]?.name || "General",
     };
 
     try {
@@ -98,7 +121,7 @@ export default function MockTestQuestionsPage() {
       options: Array.isArray(question.options) ? question.options : ["", "", "", ""],
       correctAnswer: question.correctAnswer || 0,
       explanation: question.explanation || "",
-      section: question.section || "General",
+      sectionName: question.sectionName || question.section || "General",
       marks: question.marks ?? 1,
       negativeMarks: question.negativeMarks ?? 0,
     });
@@ -117,7 +140,7 @@ export default function MockTestQuestionsPage() {
 
   const filteredQuestions = questions.filter((question) => (
     question.question.toLowerCase().includes(search.toLowerCase()) ||
-    question.section.toLowerCase().includes(search.toLowerCase())
+    (question.sectionName || question.section || "").toLowerCase().includes(search.toLowerCase())
   ));
 
   return (
@@ -127,9 +150,15 @@ export default function MockTestQuestionsPage() {
           <h1 className="text-2xl font-bold text-navy">Question Builder</h1>
           <p className="text-sm text-gray-500 mt-1">Create and manage MCQs for mock tests.</p>
         </div>
-        <select value={selectedTest} onChange={(e) => setSelectedTest(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white">
-          {tests.map((test) => <option key={test._id} value={test._id}>{test.title}</option>)}
-        </select>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <select value={selectedTest} onChange={(e) => { setSelectedTest(e.target.value); setSelectedSection(""); }} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white">
+            {tests.map((test) => <option key={test._id} value={test._id}>{test.title}</option>)}
+          </select>
+          <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white">
+            <option value="">All Sections</option>
+            {examSections.map((section: any) => <option key={section.name} value={section.name}>{section.name}</option>)}
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6">
@@ -149,7 +178,7 @@ export default function MockTestQuestionsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-1 rounded-full">Q{index + 1}</span>
-                        <span className="text-xs text-gray-500">{question.section}</span>
+                        <span className="text-xs text-gray-500">{question.sectionName || question.section}</span>
                         <span className="text-xs text-gray-500">{question.marks} marks</span>
                       </div>
                       <h3 className="font-semibold text-navy text-sm leading-relaxed">{question.question}</h3>
@@ -183,7 +212,9 @@ export default function MockTestQuestionsPage() {
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <input value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} placeholder="Section" className="px-3 py-2 border border-gray-200 rounded-xl text-sm" />
+            <select value={form.sectionName} onChange={(e) => setForm({ ...form, sectionName: e.target.value })} className="px-3 py-2 border border-gray-200 rounded-xl text-sm bg-white">
+              {examSections.map((section: any) => <option key={section.name} value={section.name}>{section.name}</option>)}
+            </select>
             <input type="number" value={form.marks} onChange={(e) => setForm({ ...form, marks: e.target.value })} placeholder="Marks" className="px-3 py-2 border border-gray-200 rounded-xl text-sm" />
             <input type="number" step="0.25" value={form.negativeMarks} onChange={(e) => setForm({ ...form, negativeMarks: e.target.value })} placeholder="Negative" className="px-3 py-2 border border-gray-200 rounded-xl text-sm" />
           </div>

@@ -27,6 +27,7 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
     totalQuestions: 0,
     totalMarks: 0,
     instructions: "",
+    examSections: [{ name: "General", duration: 30, totalQuestions: 0 }],
     status: "active",
     isFeatured: false,
   });
@@ -48,6 +49,9 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
           totalQuestions: testData.totalQuestions || 0,
           totalMarks: testData.totalMarks || 0,
           instructions: testData.instructions || "",
+          examSections: Array.isArray(testData.examSections) && testData.examSections.length > 0
+            ? testData.examSections
+            : [{ name: "General", duration: testData.duration || 30, totalQuestions: testData.totalQuestions || 0 }],
           status: testData.status || "active",
           isFeatured: Boolean(testData.isFeatured),
         });
@@ -75,7 +79,15 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
     setSubmitting(true);
 
     try {
-      await updateMockTestAPI(id, { ...formData, sections });
+      const examSections = formData.examSections
+        .filter((section: any) => section.name.trim())
+        .map((section: any) => ({
+          name: section.name.trim(),
+          duration: Number(section.duration) || formData.duration || 30,
+          totalQuestions: Number(section.totalQuestions) || 0,
+        }));
+
+      await updateMockTestAPI(id, { ...formData, examSections, sections });
       toast.success("Mock Test updated successfully!");
       router.push("/admin/mock-tests");
     } catch (error: any) {
@@ -186,6 +198,23 @@ function PageSettings({
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Instructions</label>
             <textarea rows={4} value={formData.instructions} onChange={(e) => setFormData({ ...formData, instructions: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none resize-none" placeholder="Add test rules, timing notes, marking scheme..." />
+          </div>
+
+          <div className="pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-xs font-bold text-gray-500 uppercase">Exam Sections</label>
+              <button type="button" onClick={() => setFormData({ ...formData, examSections: [...formData.examSections, { name: "", duration: formData.duration || 30, totalQuestions: 0 }] })} className="text-xs font-bold text-primary hover:underline">+ Add Section</button>
+            </div>
+            <div className="space-y-3">
+              {formData.examSections.map((section: any, index: number) => (
+                <div key={index} className="grid grid-cols-[1fr_80px_80px_32px] gap-2 items-center">
+                  <input type="text" placeholder="VARC" value={section.name} onChange={(e) => setFormData({ ...formData, examSections: formData.examSections.map((item: any, i: number) => i === index ? { ...item, name: e.target.value } : item) })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+                  <input type="number" min={1} placeholder="Min" value={section.duration} onChange={(e) => setFormData({ ...formData, examSections: formData.examSections.map((item: any, i: number) => i === index ? { ...item, duration: Number(e.target.value) } : item) })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+                  <input type="number" min={0} placeholder="Qs" value={section.totalQuestions} onChange={(e) => setFormData({ ...formData, examSections: formData.examSections.map((item: any, i: number) => i === index ? { ...item, totalQuestions: Number(e.target.value) } : item) })} className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+                  <button type="button" onClick={() => setFormData({ ...formData, examSections: formData.examSections.filter((_: any, i: number) => i !== index) })} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">x</button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
