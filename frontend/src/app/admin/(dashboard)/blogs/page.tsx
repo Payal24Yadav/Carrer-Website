@@ -15,7 +15,7 @@ export default function AdminBlogsPage() {
 
   const fetchBlogs = async (p = 1) => {
     setLoading(true);
-    try { let params = `page=${p}&limit=10`; if (search) params += `&search=${search}`; const { data } = await getBlogsAPI(params); setBlogs(data.data); setPagination(data.pagination); setPage(p); } catch {} finally { setLoading(false); }
+    try { let params = `page=${p}&limit=10&admin=true`; if (search) params += `&search=${search}`; const { data } = await getBlogsAPI(params); setBlogs(data.data); setPagination(data.pagination); setPage(p); } catch {} finally { setLoading(false); }
   };
 
   useEffect(() => { fetchBlogs(); }, []);
@@ -48,7 +48,7 @@ export default function AdminBlogsPage() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead><tr className="bg-gray-50 text-left"><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Title</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Category</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Author</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th></tr></thead>
+            <thead><tr className="bg-gray-50 text-left"><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Title</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Category</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Status</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Author</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th><th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th></tr></thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? [...Array(5)].map((_, i) => <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="h-4 skeleton-shimmer rounded w-full" /></td></tr>) :
                 blogs.length === 0 ? <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">No blogs found</td></tr> :
@@ -56,8 +56,9 @@ export default function AdminBlogsPage() {
                   <tr key={blog._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4"><div className="font-medium text-navy text-sm max-w-xs truncate">{blog.title}</div><div className="text-xs text-gray-400">/{blog.slug}</div></td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-primary/5 text-primary text-xs rounded-full font-medium">{blog.category}</span></td>
+                    <td className="px-6 py-4"><span className={`px-2 py-1 text-xs rounded-full font-medium ${blog.status === 'draft' ? 'bg-yellow-50 text-yellow-600' : 'bg-green-50 text-green-600'}`}>{blog.status}</span></td>
                     <td className="px-6 py-4 text-sm text-gray-500">{blog.author}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{formatDate(blog.publishedDate)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{formatDate(blog.publishDate || blog.publishedDate)}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Link href={`/admin/blogs/edit/${blog._id}`} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit className="w-4 h-4" /></Link>

@@ -16,12 +16,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     if (!blog) return { title: "Blog Not Found | CareerPath" };
     
     return {
-      title: `${blog.title} | CareerPath Blog`,
-      description: blog.description,
+      title: blog.metaTitle || `${blog.title} | CareerPath Blog`,
+      description: blog.metaDescription || blog.description,
       openGraph: {
-        title: blog.title,
-        description: blog.description,
-        images: [blog.thumbnailUrl],
+        title: blog.metaTitle || blog.title,
+        description: blog.metaDescription || blog.description,
       },
     };
   } catch {

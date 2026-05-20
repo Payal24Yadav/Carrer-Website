@@ -297,7 +297,7 @@ export default function CollegeProfilePage() {
                 <input required type="email" placeholder="Email Address" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:outline-none focus:border-primary transition-all text-sm" />
                 <select value={form.course} onChange={e => setForm({...form, course: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:outline-none focus:border-primary transition-all text-sm">
                   <option value="">Select Course</option>
-                  {college.courses?.map((c: any) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                  {college.courses?.map((c: any, i: number) => <option key={c._id || `${c.name}-${i}`} value={c.name}>{c.name}</option>)}
                 </select>
                 <button disabled={submitting} type="submit" className="w-full py-4 bg-primary text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
                   {submitting ? "Submitting..." : <><Send className="w-4 h-4" /> Request Call Back</>}

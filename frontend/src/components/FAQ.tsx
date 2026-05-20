@@ -23,8 +23,12 @@ export default function FAQ() {
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <div key={index} className="border border-gray-100 rounded-2xl overflow-hidden hover:border-primary/20 transition-colors">
-              <button onClick={() => setOpenIndex(openIndex === index ? null : index)} className="w-full flex items-center justify-between p-6 text-left">
-                <span className="font-semibold text-navy pr-4">{faq.question}aa</span>
+              <button
+                suppressHydrationWarning
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                className="w-full flex items-center justify-between p-6 text-left"
+              >
+                <span className="font-semibold text-navy pr-4">{faq.question}</span>
                 <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 flex-shrink-0 ${openIndex === index ? "rotate-180" : ""}`} />
               </button>
               {openIndex === index && (

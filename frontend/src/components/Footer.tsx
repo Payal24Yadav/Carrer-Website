@@ -21,6 +21,18 @@ const courses = [
   "Career Counselling",
 ];
 
+const resources = [
+  { name: "Mock Test Hub", href: "/mock-tests", badge: "NEW" },
+  { name: "Free CAT Mock 2026", href: "/tools/cat-mock-test", badge: "POPULAR" },
+  { name: "Free JEE Mock 2026", href: "/tools/jee-mock-test", badge: "NEW" },
+  { name: "PYQ Papers", href: "/pyq-papers" },
+  { name: "Resume Score & Audit", href: "/resume-score", badge: "NEW" },
+  { name: "Online Degrees", href: "/online-degree-certification" },
+  { name: "Abroad Education", href: "/inquiry" },
+  { name: "Certifications", href: "/certifications", badge: "NEW" },
+  { name: "Govt Jobs", href: "/govt-jobs" },
+];
+
 export default function Footer() {
   return (
     <footer className="bg-navy text-gray-300">
@@ -48,9 +60,9 @@ export default function Footer() {
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {/* Brand */}
-          <div className="lg:col-span-1">
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
                 <GraduationCap className="w-6 h-6 text-white" />
@@ -97,6 +109,34 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Resources */}
+          <div>
+            <h4 className="text-white font-semibold mb-5 text-lg">Resources</h4>
+            <ul className="space-y-3">
+              {resources.map((res) => (
+                <li key={res.name} className="flex items-center flex-wrap gap-2">
+                  <Link
+                    href={res.href}
+                    className="text-sm text-gray-400 hover:text-accent transition-colors flex items-center gap-2 group"
+                  >
+                    <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+                    {res.name}
+                  </Link>
+                  {res.badge === "NEW" && (
+                    <span className="text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30 shrink-0">
+                      NEW
+                    </span>
+                  )}
+                  {res.badge === "POPULAR" && (
+                    <span className="text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shrink-0">
+                      POPULAR
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Courses */}
           <div>
             <h4 className="text-white font-semibold mb-5 text-lg">Our Services</h4>
@@ -118,15 +158,17 @@ export default function Footer() {
             <p className="text-sm text-gray-400 mb-4">
               Get the latest updates on admissions, exams, and career opportunities.
             </p>
-            <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-3" onSubmit={(e) => e.preventDefault()} suppressHydrationWarning>
               <input
                 type="email"
                 placeholder="Enter your email"
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+                suppressHydrationWarning
               />
               <button
                 type="submit"
                 className="w-full px-4 py-3 bg-gradient-to-r from-primary to-blue-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all"
+                suppressHydrationWarning
               >
                 Subscribe
               </button>
@@ -138,7 +180,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500" suppressHydrationWarning>
             © {new Date().getFullYear()} CareerPath. All rights reserved.
           </p>
           <div className="flex items-center gap-6">

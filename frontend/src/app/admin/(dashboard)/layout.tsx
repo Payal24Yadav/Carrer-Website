@@ -3,14 +3,18 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { GraduationCap, LayoutDashboard, FileText, Briefcase, Building2, MessageSquare, Star, LogOut, Menu, X, ChevronRight, BookOpen, Users } from "lucide-react";
+import { GraduationCap, LayoutDashboard, FileText, Briefcase, Building2, MessageSquare, Star, LogOut, Menu, X, ChevronRight, BookOpen, Users, Bell, ClipboardList } from "lucide-react";
 
 const sidebarLinks = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Blogs", href: "/admin/blogs", icon: FileText },
+  { name: "News", href: "/admin/news", icon: Bell },
   { name: "Jobs", href: "/admin/jobs", icon: Briefcase },
+  { name: "Internships", href: "/admin/internships", icon: Briefcase },
   { name: "Colleges", href: "/admin/colleges", icon: Building2 },
   { name: "Programs", href: "/admin/programs", icon: BookOpen },
+  { name: "Mock Tests", href: "/admin/mock-tests", icon: BookOpen },
+  { name: "Test Registrations", href: "/admin/mock-test-registrations", icon: ClipboardList },
   { name: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
   { name: "Testimonials", href: "/admin/testimonials", icon: Star },
   { name: "College Partners", href: "/admin/college-partners", icon: Users },
@@ -38,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-navy transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-navy transform transition-transform duration-300 lg:translate-x-0 h-screen overflow-y-auto ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col h-full">
           <div className="p-6 flex items-center justify-between">
             <Link href="/admin/dashboard" className="flex items-center gap-2">
@@ -75,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen lg:pl-64">
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4 sticky top-0 z-30">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 text-gray-500 hover:text-navy"><Menu className="w-5 h-5" /></button>

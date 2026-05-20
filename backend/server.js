@@ -32,6 +32,10 @@ app.use('/api/inquiry', require('./routes/inquiryRoutes'));
 app.use('/api/testimonials', require('./routes/testimonialRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use('/api/partners', require('./routes/partnerRoutes'));
+app.use('/api/news', require('./routes/newsRoutes'));
+app.use('/api/internships', require('./routes/internshipRoutes'));
+app.use('/api/mock-tests', require('./routes/mockTestRoutes'));
+app.use('/api/mock-test-registrations', require('./routes/mockTestRegistrationRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {

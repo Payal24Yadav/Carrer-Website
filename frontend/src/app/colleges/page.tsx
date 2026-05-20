@@ -25,6 +25,17 @@ export default function CollegesPage() {
   const [sortBy, setSortBy] = useState("newest");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Read URL search parameter for degree on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const degreeParam = urlParams.get("degree");
+      if (degreeParam) {
+        setSelectedDegree(degreeParam);
+      }
+    }
+  }, []);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 500);

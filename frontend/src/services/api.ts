@@ -1,5 +1,7 @@
 import axios from "axios";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
   withCredentials: true,
@@ -8,25 +10,49 @@ const API = axios.create({
   },
 });
 
+API.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/admin/login';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth APIs
 export const loginAPI = async (data: { email: string; password: string }) => {
   const res = await API.post("/auth/login", data);
   if (res.data.token) {
     localStorage.setItem("token", res.data.token);
-    API.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
   }
   return res;
 };
 
 export const logoutAPI = () => {
   localStorage.removeItem("token");
-  delete API.defaults.headers.common["Authorization"];
   return API.post("/auth/logout");
 };
 
 export const getMeAPI = () => {
-  const token = localStorage.getItem("token");
-  if (token) API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   return API.get("/auth/me");
 };
 
@@ -80,5 +106,33 @@ export const deleteTestimonialAPI = (id: string) => API.delete(`/testimonials/${
 
 // Stats API
 export const getStatsAPI = () => API.get("/stats");
+
+// News APIs
+export const getNewsAPI = (params?: string) => API.get(`/news${params ? `?${params}` : ""}`);
+export const getNewsBySlugAPI = (slug: string) => API.get(`/news/${slug}`);
+export const getNewsByIdAPI = (id: string) => API.get(`/news/id/${id}`);
+export const createNewsAPI = (data: any) => API.post("/news", data);
+export const updateNewsAPI = (id: string, data: any) => API.put(`/news/update/${id}`, data);
+export const deleteNewsAPI = (id: string) => API.delete(`/news/delete/${id}`);
+
+// Internship APIs
+export const getInternshipsAPI = (params?: string) => API.get(`/internships${params ? `?${params}` : ""}`);
+export const getInternshipByIdAPI = (id: string) => API.get(`/internships/${id}`);
+export const createInternshipAPI = (data: any) => API.post("/internships", data);
+export const updateInternshipAPI = (id: string, data: any) => API.put(`/internships/${id}`, data);
+export const deleteInternshipAPI = (id: string) => API.delete(`/internships/${id}`);
+
+// Mock Test APIs
+export const getMockTestsAPI = (params?: string) => API.get(`/mock-tests${params ? `?${params}` : ""}`);
+export const getMockTestBySlugAPI = (slug: string) => API.get(`/mock-tests/slug/${slug}`);
+export const getMockTestByIdAPI = (id: string) => API.get(`/mock-tests/id/${id}`);
+export const createMockTestAPI = (data: any) => API.post("/mock-tests", data);
+export const updateMockTestAPI = (id: string, data: any) => API.put(`/mock-tests/${id}`, data);
+export const deleteMockTestAPI = (id: string) => API.delete(`/mock-tests/${id}`);
+
+// Mock Test Registration APIs
+export const createMockTestRegistrationAPI = (data: any) => API.post("/mock-test-registrations", data);
+export const getMockTestRegistrationsAPI = (params?: string) => API.get(`/mock-test-registrations${params ? `?${params}` : ""}`);
+export const deleteMockTestRegistrationAPI = (id: string) => API.delete(`/mock-test-registrations/${id}`);
 
 export default API;

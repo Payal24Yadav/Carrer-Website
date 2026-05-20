@@ -18,7 +18,7 @@ const blogSchema = new mongoose.Schema({
     required: [true, 'Please provide a description'],
   },
   content: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     required: [true, 'Please provide content'],
   },
   category: {
@@ -35,9 +35,34 @@ const blogSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  isPublished: {
+  publishDate: {
+    type: Date,
+    default: Date.now,
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'published',
+  },
+  tags: {
+    type: [String],
+    default: [],
+  },
+  metaTitle: {
+    type: String,
+  },
+  metaDescription: {
+    type: String,
+  },
+  relatedBlogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog',
+    }
+  ],
+  isFeatured: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 }, { timestamps: true });
 

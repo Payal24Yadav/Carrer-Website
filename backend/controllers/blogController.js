@@ -20,6 +20,11 @@ exports.getBlogs = async (req, res) => {
       query.category = req.query.category;
     }
 
+    // Hide drafts unless admin request
+    if (req.query.admin !== 'true') {
+      query.status = 'published';
+    }
+
     const total = await Blog.countDocuments(query);
     const blogs = await Blog.find(query)
       .sort({ publishedDate: -1 })
@@ -45,13 +50,28 @@ exports.getBlogs = async (req, res) => {
 // @route   GET /api/blogs/:slug
 exports.getBlogBySlug = async (req, res) => {
   try {
-    const blog = await Blog.findOne({ slug: req.params.slug });
+    const query = { slug: req.params.slug };
+    if (req.query.admin !== 'true') {
+      query.status = 'published';
+    }
+
+    const blog = await Blog.findOne(query).populate('relatedBlogs', 'title slug category publishDate');
 
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
 
-    res.json({ success: true, data: blog });
+    let blogObj = blog.toObject();
+
+    if (!blogObj.relatedBlogs || blogObj.relatedBlogs.length === 0) {
+      const latestBlogs = await Blog.find({ status: 'published', _id: { $ne: blog._id } })
+        .sort({ publishDate: -1 })
+        .limit(3)
+        .select('title slug category publishDate');
+      blogObj.relatedBlogs = latestBlogs;
+    }
+
+    res.json({ success: true, data: blogObj });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

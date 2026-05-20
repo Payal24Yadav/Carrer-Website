@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import FeaturedColleges from "@/components/FeaturedColleges";
 import LatestBlogs from "@/components/LatestBlogs";
+import AdmissionNews from "@/components/AdmissionNews";
 import JobOpportunities from "@/components/JobOpportunities";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <ServicesSection />
+      <AdmissionNews />
       <FeaturedColleges />
       <LatestBlogs />
       <JobOpportunities />
