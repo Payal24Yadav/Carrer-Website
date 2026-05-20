@@ -23,6 +23,10 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
     subtitle: "",
     badgeType: "",
     shortDescription: "",
+    duration: 30,
+    totalQuestions: 0,
+    totalMarks: 0,
+    instructions: "",
     status: "active",
     isFeatured: false,
   });
@@ -40,6 +44,10 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
           subtitle: testData.subtitle || "",
           badgeType: testData.badgeType || "",
           shortDescription: testData.shortDescription || "",
+          duration: testData.duration || 30,
+          totalQuestions: testData.totalQuestions || 0,
+          totalMarks: testData.totalMarks || 0,
+          instructions: testData.instructions || "",
           status: testData.status || "active",
           isFeatured: Boolean(testData.isFeatured),
         });
@@ -158,6 +166,26 @@ function PageSettings({
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Short Description</label>
             <textarea rows={3} value={formData.shortDescription} onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none resize-none" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Duration</label>
+              <input type="number" min={1} value={formData.duration} onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Questions</label>
+              <input type="number" min={0} value={formData.totalQuestions} onChange={(e) => setFormData({ ...formData, totalQuestions: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Marks</label>
+              <input type="number" min={0} value={formData.totalMarks} onChange={(e) => setFormData({ ...formData, totalMarks: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Instructions</label>
+            <textarea rows={4} value={formData.instructions} onChange={(e) => setFormData({ ...formData, instructions: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none resize-none" placeholder="Add test rules, timing notes, marking scheme..." />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

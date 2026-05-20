@@ -135,4 +135,14 @@ export const createMockTestRegistrationAPI = (data: any) => API.post("/mock-test
 export const getMockTestRegistrationsAPI = (params?: string) => API.get(`/mock-test-registrations${params ? `?${params}` : ""}`);
 export const deleteMockTestRegistrationAPI = (id: string) => API.delete(`/mock-test-registrations/${id}`);
 
+// Question APIs
+export const getQuestionsAPI = (params?: string) => API.get(`/questions${params ? `?${params}` : ""}`);
+export const getQuestionsForTestAPI = (testId: string) => API.get(`/questions/test/${testId}`);
+export const createQuestionAPI = (data: any) => API.post("/questions", data);
+export const updateQuestionAPI = (id: string, data: any) => API.put(`/questions/${id}`, data);
+export const deleteQuestionAPI = (id: string) => API.delete(`/questions/${id}`);
+
+// Mock Test Attempt APIs
+export const submitMockTestAttemptAPI = (data: any) => API.post("/attempts/submit", data);
+
 export default API;

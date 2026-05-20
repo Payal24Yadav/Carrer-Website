@@ -36,6 +36,8 @@ app.use('/api/news', require('./routes/newsRoutes'));
 app.use('/api/internships', require('./routes/internshipRoutes'));
 app.use('/api/mock-tests', require('./routes/mockTestRoutes'));
 app.use('/api/mock-test-registrations', require('./routes/mockTestRegistrationRoutes'));
+app.use('/api/questions', require('./routes/questionRoutes'));
+app.use('/api/attempts', require('./routes/mockTestAttemptRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {

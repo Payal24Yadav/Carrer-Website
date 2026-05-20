@@ -27,6 +27,10 @@ interface MockTest {
   subtitle: string;
   badgeType?: string;
   shortDescription?: string;
+  duration?: number;
+  totalQuestions?: number;
+  totalMarks?: number;
+  instructions?: string;
   sections?: { type: string; title?: string; content: unknown }[];
   status: string;
   isFeatured: boolean;
@@ -109,10 +113,7 @@ export default function MockTestDetailsClient({ slug }: { slug: string }) {
   };
 
   const startTest = () => {
-    toast.success(`Initializing ${mockTest?.title} Mock Test Environment... Enjoy your practice!`, {
-      icon: "⚡",
-      duration: 5000,
-    });
+    document.getElementById("mock-test-registration")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const getRoute = (s: string) => {
@@ -191,7 +192,7 @@ export default function MockTestDetailsClient({ slug }: { slug: string }) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Details side */}
           <div className="flex-1 space-y-8">
-            <RegistrationForm examTitle={mockTest.title} />
+            <RegistrationForm examTitle={mockTest.title} examSlug={mockTest.slug} />
 
             {/* Dynamic Tabs Card */}
             {mockTest.sections && mockTest.sections.length > 0 ? (

@@ -6,6 +6,12 @@ const mockTestRegistrationSchema = new mongoose.Schema({
     required: [true, 'Please provide the exam title'],
     trim: true,
   },
+  examSlug: {
+    type: String,
+    required: [true, 'Please provide the exam slug'],
+    lowercase: true,
+    trim: true,
+  },
   fullName: {
     type: String,
     required: [true, 'Please provide your full name'],
@@ -29,6 +35,7 @@ const mockTestRegistrationSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+mockTestRegistrationSchema.index({ examSlug: 1, createdAt: -1 });
 mockTestRegistrationSchema.index({ examTitle: 1, createdAt: -1 });
 mockTestRegistrationSchema.index({ fullName: 'text', email: 'text', phone: 'text', location: 'text', examTitle: 'text' });
 

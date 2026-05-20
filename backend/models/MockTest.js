@@ -33,6 +33,26 @@ const mockTestSchema = new mongoose.Schema({
     enum: ['HOT', 'NEW', 'EXPERT', 'LATEST', ''],
     default: '',
   },
+  duration: {
+    type: Number,
+    default: 30,
+    min: [1, 'Duration must be at least 1 minute'],
+  },
+  totalQuestions: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  totalMarks: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  instructions: {
+    type: String,
+    default: '',
+    trim: true,
+  },
   
   // Dynamic CMS Block Builder Field
   sections: [{

@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { MapPin, Mail, Phone, Send, User } from "lucide-react";
 import toast from "react-hot-toast";
 import { createMockTestRegistrationAPI } from "@/services/api";
 
 type RegistrationFormProps = {
   examTitle: string;
+  examSlug: string;
 };
 
-export default function RegistrationForm({ examTitle }: RegistrationFormProps) {
+export default function RegistrationForm({ examTitle, examSlug }: RegistrationFormProps) {
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -25,9 +28,17 @@ export default function RegistrationForm({ examTitle }: RegistrationFormProps) {
     const toastId = toast.loading("Submitting registration...");
 
     try {
-      await createMockTestRegistrationAPI({ ...formData, examTitle });
+      await createMockTestRegistrationAPI({ ...formData, examTitle, examSlug });
       toast.success("Registration received! Our team will contact you soon.", { id: toastId });
       setFormData({ fullName: "", email: "", phone: "", location: "" });
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("mockTestUser", JSON.stringify({
+          userName: formData.fullName,
+          email: formData.email,
+          examSlug,
+        }));
+      }
+      router.push(`/mock-tests/start/${examSlug}`);
     } catch (error: unknown) {
       toast.error(getErrorMessage(error) || "Failed to submit registration", { id: toastId });
     } finally {
@@ -36,7 +47,7 @@ export default function RegistrationForm({ examTitle }: RegistrationFormProps) {
   };
 
   return (
-    <div className="bg-white border border-gray-100 rounded-[2rem] shadow-sm mb-8 overflow-hidden">
+    <div id="mock-test-registration" className="bg-white border border-gray-100 rounded-[2rem] shadow-sm mb-8 overflow-hidden">
       <div className="p-6 sm:p-8 border-b border-gray-100 bg-gradient-to-r from-primary/10 via-white to-accent/10">
         <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary bg-white/80 border border-primary/10 rounded-full px-3 py-1">
           Exam Registration

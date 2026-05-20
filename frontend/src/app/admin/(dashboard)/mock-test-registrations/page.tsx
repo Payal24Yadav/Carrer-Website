@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/utils";
 type Registration = {
   _id: string;
   examTitle: string;
+  examSlug?: string;
   fullName: string;
   email: string;
   phone: string;
@@ -90,9 +91,10 @@ export default function AdminMockTestRegistrationsPage() {
       const { data } = await getMockTestRegistrationsAPI(params.toString());
       const rows: Registration[] = data.data || [];
       const csv = [
-        ["Exam Title", "Full Name", "Email", "Phone", "Location", "Submitted At"],
+        ["Exam Title", "Exam Slug", "Full Name", "Email", "Phone", "Location", "Submitted At"],
         ...rows.map((registration) => [
           registration.examTitle,
+          registration.examSlug || "",
           registration.fullName,
           registration.email,
           registration.phone,

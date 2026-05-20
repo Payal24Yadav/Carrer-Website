@@ -14,6 +14,7 @@ const sidebarLinks = [
   { name: "Colleges", href: "/admin/colleges", icon: Building2 },
   { name: "Programs", href: "/admin/programs", icon: BookOpen },
   { name: "Mock Tests", href: "/admin/mock-tests", icon: BookOpen },
+  { name: "Questions", href: "/admin/mock-tests/questions", icon: ClipboardList },
   { name: "Test Registrations", href: "/admin/mock-test-registrations", icon: ClipboardList },
   { name: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
   { name: "Testimonials", href: "/admin/testimonials", icon: Star },
